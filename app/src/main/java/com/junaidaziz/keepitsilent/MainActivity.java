@@ -13,11 +13,15 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
+import android.net.Uri;
+import android.media.AudioManager;
 
 public class MainActivity extends AppCompatActivity {
 
     Context context;
-    private static final int MY_PERMISSIONS_REQUEST_WRITE_SETTINGS = 1;
+    private static final int MY_PERMISSIONS_REQUEST_READ_PHONE_STATE = 101;
+    boolean audioPermission;
+    boolean readPhonePermission;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,8 +29,10 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         this.context = this;
 
+        audioPermission = checkForAudioPermission();
+        readPhonePermission = checkForReadPhonePermission();
 
-//        Intent incomingCall = new Intent(this.context, BroadcastReceiver.class);
+//        Intent incomingCall = new Intent(this.context, IncomingCall.class);
 //
 //        boolean alarmRunning = (PendingIntent.getBroadcast(this.context, 0, incomingCall, PendingIntent.FLAG_NO_CREATE) != null);
 //        if (alarmRunning == false){
@@ -45,9 +51,7 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onClick(View v) {
 
-            checkForPermission();
-
-            if (permissionGranted()) {
+            if (checkForPermissions()) {
                 try {
                     toggleSoundMode();
                 } catch (Exception e) {
@@ -61,44 +65,91 @@ public class MainActivity extends AppCompatActivity {
     };
 
     public void toggleSoundMode(){
+            Log.d("Permission: ", "Happy Jingles");
 
+        AudioManager audio = (AudioManager)getSystemService(Context.AUDIO_SERVICE);
+
+        int currentMode = audio.getRingerMode();
+
+        switch (currentMode){
+            case AudioManager.RINGER_MODE_NORMAL:
+                audio.setRingerMode(AudioManager.RINGER_MODE_VIBRATE);
+                Toast.makeText(context, "Viration Activated", Toast.LENGTH_LONG).show();
+                break;
+            case AudioManager.RINGER_MODE_VIBRATE:
+                audio.setRingerMode(AudioManager.RINGER_MODE_NORMAL);
+                Toast.makeText(context, "Normal mode Activated", Toast.LENGTH_LONG).show();
+                break;
+        }
+
+
+
+    }
+
+    public boolean checkForPermissions(){
+
+            if (audioPermission && readPhonePermission){
+                return true;
+            } else {
+                return false;
+            }
+
+
+    }
+
+    public boolean checkForAudioPermission(){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
+            if (!Settings.System.canWrite(context)){
+                Log.d("Permission: ", "at API 23+ statement");
+                showPermissionDialog(context);
+            } else if (Settings.System.canWrite(context)) {
+                Log.d("Permission: ", "Granted");
+                return true;
+            }
+        } else if (ContextCompat.checkSelfPermission(context, Manifest.permission.WRITE_SETTINGS) == PackageManager.PERMISSION_GRANTED){
+            return true;
+        }
+
+
+        return false;
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         switch (requestCode) {
-            case MY_PERMISSIONS_REQUEST_WRITE_SETTINGS: {
+            case MY_PERMISSIONS_REQUEST_READ_PHONE_STATE: {
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
-                    Log.d("Permission: ", "GRANTED");
-                    return;
+                    try {
+                        readPhonePermission = true;
+                    } catch (Exception e) {
+                        Log.d("Copying Database", "fail at menu location, reason:", e);
+                    }
                 } else {
-                    Log.d("Permission: ", "NOT GRANTED");
-                    Toast.makeText(MainActivity.this, "Permission Not granted", Toast.LENGTH_LONG).show();
+                    Toast.makeText(AddAmountActivity.this, "Permission Not granted", Toast.LENGTH_LONG).show();
                 }
             }
         }
     }
 
-    public void checkForPermission(){
-        if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.WRITE_SETTINGS) == PackageManager.PERMISSION_DENIED) {
-            Log.d("Permission: ", "at if statement");
-            ActivityCompat.requestPermissions(MainActivity.this,
-                    new String[]{Manifest.permission.WRITE_SETTINGS},
-                    MY_PERMISSIONS_REQUEST_WRITE_SETTINGS);
+    public boolean checkForReadPhonePermission(){
 
+        if (ContextCompat.checkSelfPermission(context, Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED){
+            Toast.makeText(context, "READ PHONE STATE PERMISSION GRANTED", Toast.LENGTH_LONG).show();
         } else {
-            Log.d("Permission: ", "at else statement");
-            return;
+            ActivityCompat.requestPermissions(MainActivity.this,
+                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                    MY_PERMISSIONS_REQUEST_READ_PHONE_STATE);
         }
-    }
 
-    public boolean permissionGranted() {
-        if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.WRITE_SETTINGS) == PackageManager.PERMISSION_GRANTED){
-            return true;
-        }
         return false;
     }
 
+    public void showPermissionDialog(final Context c){
+        Intent intent = new Intent(android.provider.Settings.ACTION_MANAGE_WRITE_SETTINGS);
+        intent.setData(Uri.parse("package:" + c.getPackageName()));
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
+    }
 
 
 

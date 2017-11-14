@@ -7,7 +7,7 @@ import android.content.*;
  * Created by junaidaziz on 11/13/17.
  */
 
-public class BroadcastReceiver extends android.content.BroadcastReceiver {
+public class IncomingCall extends android.content.BroadcastReceiver {
 
 
 
