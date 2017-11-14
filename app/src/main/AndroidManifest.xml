@@ -25,7 +25,8 @@
 
         <receiver android:name=".IncomingCall">
             <intent-filter>
-                <action android:name="android.intent.action.PHONE_STATE" />
+              <!--  <action android:name="android.intent.action.PHONE_STATE" /> -->
+                <action android:name="ax.androidexample.mybroadcast" />
             </intent-filter>
         </receiver>
 
