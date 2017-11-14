@@ -22,6 +22,7 @@ public class MainActivity extends AppCompatActivity {
     private static final int MY_PERMISSIONS_REQUEST_READ_PHONE_STATE = 101;
     boolean audioPermission;
     boolean readPhonePermission;
+    static Button soundBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,8 +30,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         this.context = this;
 
-        audioPermission = false; //checkForAudioPermission();
-        readPhonePermission = false; //checkForReadPhonePermission();
+        audioPermission = checkForAudioPermission();
+        readPhonePermission = checkForReadPhonePermission();
 
         Log.d("Permissions: ", audioPermission + " " + readPhonePermission);
 
@@ -43,24 +44,31 @@ public class MainActivity extends AppCompatActivity {
 //            alarmManager.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime(), 1800000, pendingIntent);
 //        }
 
-        Button soundBtn = findViewById(R.id.soundBtn);
+        soundBtn = findViewById(R.id.soundBtn);
         soundBtn.setEnabled(false);
+        soundBtn.setOnClickListener(onSoundBtnListener);
 
         if (!audioPermission){
             audioPermission = checkForAudioPermission();
-        } else if (!readPhonePermission){
+        }
+
+
+
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+
+        if (!readPhonePermission){
             readPhonePermission = checkForReadPhonePermission();
         }
 
-
         if (audioPermission && readPhonePermission){
             soundBtn.setEnabled(true);
-            soundBtn.setOnClickListener(onSoundBtnListener);
+
         }
-
-
-
-
 
     }
 
