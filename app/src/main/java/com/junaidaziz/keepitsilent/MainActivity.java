@@ -54,6 +54,8 @@ public class MainActivity extends AppCompatActivity {
 //            alarmManager.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime(), 1800000, pendingIntent);
 //        }
 
+
+
         soundBtn = findViewById(R.id.soundBtn);
         readCalls = findViewById(R.id.read_calls_permission);
         audio = findViewById(R.id.audio_permission_Btn);
@@ -133,7 +135,10 @@ public class MainActivity extends AppCompatActivity {
                     Intent intent = new Intent();
                     intent.setAction("ax.androidexample.mybroadcast");
                     sendBroadcast(intent);
-                    Log.d("BroadCast: ", "initiated");
+                    Log.d("BroadCast: ", "intent initiated");
+
+
+
                 } catch (Exception e) {
                     Log.d("toggle sound", "fail at button, reason:", e);
                 }

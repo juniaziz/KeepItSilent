@@ -40,19 +40,27 @@ public class IncomingCall extends android.content.BroadcastReceiver {
         Log.d("BroadCast: ", "case 2: " + AudioManager.RINGER_MODE_VIBRATE);
 
         switch (currentMode) {
-            case AudioManager.RINGER_MODE_NORMAL:
+            case AudioManager.RINGER_MODE_NORMAL: {
                 audio.setRingerMode(AudioManager.RINGER_MODE_VIBRATE);
                 Log.d("BroadCast: ", "case: RINGER MODE NORMAL");
-                Toast.makeText(context, "Viration Activated", Toast.LENGTH_LONG).show();
+                Toast.makeText(context, "Vibration Activated", Toast.LENGTH_LONG).show();
                 break;
-            case AudioManager.RINGER_MODE_VIBRATE:
+            }
+            case AudioManager.RINGER_MODE_VIBRATE: {
                 Log.d("BroadCast: ", "case; RINGER MODE VIBRATE");
                 audio.setRingerMode(AudioManager.RINGER_MODE_NORMAL);
                 handleRingVolume();
                 Toast.makeText(context, "Normal mode Activated", Toast.LENGTH_LONG).show();
                 break;
+            }
+            case AudioManager.RINGER_MODE_SILENT: {
+                Log.d("BroadCast: ", "case; RINGER MODE SILENT");
+                audio.setRingerMode(AudioManager.RINGER_MODE_NORMAL);
+                handleRingVolume();
+                Toast.makeText(context, "Normal mode Activated", Toast.LENGTH_LONG).show();
+                break;
+            }
         }
-
     }
 
     public void handleRingVolume(){
@@ -70,8 +78,7 @@ public class IncomingCall extends android.content.BroadcastReceiver {
 
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
             handleAudioManager();
-        }
-        else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N){
+        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N){
             NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
 
             int currentMode = notificationManager.getCurrentInterruptionFilter();
@@ -109,8 +116,11 @@ public class IncomingCall extends android.content.BroadcastReceiver {
                     break;
                 }
             }
-
-
         }
     }
+
+
+
+
+
 }
