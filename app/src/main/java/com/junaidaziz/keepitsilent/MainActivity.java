@@ -54,8 +54,7 @@ public class MainActivity extends AppCompatActivity {
 //            alarmManager.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime(), 1800000, pendingIntent);
 //        }
 
-        Intent intentMyService = new Intent(context, TimerService.class);
-        context.startService(intentMyService);
+
 
         soundBtn = findViewById(R.id.soundBtn);
         readCalls = findViewById(R.id.read_calls_permission);
@@ -131,11 +130,14 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onClick(View v) {
                 try {
+                    Intent intentMyService = new Intent(context, TimerService.class);
+                    context.startService(intentMyService);
+
                     //toggleSoundMode();
-                    Intent intent = new Intent();
-                    intent.setAction("ax.androidexample.mybroadcast");
-                    sendBroadcast(intent);
-                    Log.d("BroadCast: ", "intent initiated");
+//                    Intent intent = new Intent();
+//                    intent.setAction("ax.androidexample.mybroadcast");
+//                    sendBroadcast(intent);
+//                    Log.d("BroadCast: ", "intent initiated");
                 } catch (Exception e) {
                     Log.d("toggle sound", "fail at button, reason:", e);
                 }
