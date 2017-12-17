@@ -5,6 +5,7 @@
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.WRITE_SETTINGS"/>
     <uses-permission android:name="android.permission.ACCESS_NOTIFICATION_POLICY"/>
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
     <application
         android:allowBackup="true"
@@ -23,8 +24,9 @@
         </activity>
 
         <service android:name=".BackgroundService" />
+        <service android:name=".TimerService" />
 
-        <receiver android:name=".IncomingCall">
+        <receiver android:name=".ToggleSoundMode">
             <intent-filter>
                 <action android:name="ax.androidexample.mybroadcast" />
             </intent-filter>

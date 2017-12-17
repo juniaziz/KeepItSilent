@@ -18,7 +18,8 @@ public class BackgroundService extends Service {
     private Boolean isRunning;
     private Context context;
     private Thread backgroundThread;
-    
+
+
 
     @Nullable
     @Override
@@ -71,9 +72,6 @@ public class BackgroundService extends Service {
 
 
         }
-
-
-
         return START_REDELIVER_INTENT;
     }
 }

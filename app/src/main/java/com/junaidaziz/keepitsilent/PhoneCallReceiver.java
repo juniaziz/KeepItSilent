@@ -3,6 +3,7 @@ package com.junaidaziz.keepitsilent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.os.SystemClock;
 import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
 import android.util.Log;
@@ -15,41 +16,35 @@ import android.widget.Toast;
 public class PhoneCallReceiver extends BroadcastReceiver {
 
     Context context;
+    long elapsedTime;
 
     @Override
     public void onReceive(Context context, Intent intent) {
         Log.d("PhoneListener: ", "intent1 recieved");
-
         this.context = context;
-
         try {
             TelephonyManager telephonyManager = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
-
             MyPhoneStateListener PhoneListener = new MyPhoneStateListener();
-
             telephonyManager.listen(PhoneListener, PhoneStateListener.LISTEN_CALL_STATE);
-
         } catch (Exception e) {
             Log.d("PhoneListener: ", e + "");
         }
-
     }
 
-
     private class MyPhoneStateListener extends PhoneStateListener{
-
         public void onCallStateChanged(int state, String incomingNumber){
             Log.d("PhoneListener: ", "onCallStateChanged " + state + " incomingNumber " + incomingNumber);
-
             if (state == 1){
 //                String msg = "New Phone Call Event. Incomming Number : "+incomingNumber;
 //                int duration = Toast.LENGTH_LONG;
 //                Toast toast = Toast.makeText(context, msg, duration);
 //                toast.show();
-                context.startService(new Intent(context, BackgroundService.class));
-                Log.d("Service: ", "onCallStateChangeListener");
-
-
+//                context.startService(new Intent(context, BackgroundService.class));
+//                Log.d("Service: ", "onCallStateChangeListener");
+                Intent intent2 = new Intent();
+                intent2.setAction("ax.androidexample.mybroadcast");
+                context.sendBroadcast(intent2);
+                Log.d("BroadCast: ", "intent initiated");
             }
         }
     }

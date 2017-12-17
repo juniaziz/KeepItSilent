@@ -18,19 +18,19 @@ import android.widget.Toast;
 import android.net.Uri;
 import android.media.AudioManager;
 
+import java.sql.Time;
+
 public class MainActivity extends AppCompatActivity {
 
     Context context;
     NotificationManager notificationManager;
     private static final int MY_PERMISSIONS_REQUEST_READ_PHONE_STATE = 101;
-    static boolean audioPermission =false;
-    static boolean readPhonePermission =false;
-    static Button soundBtn;
-    static Button readCalls;
-    static Button audio;
-    static Button notificationsBtn;
-    static TextView btn_textView;
-    static TextView step_1_textView;
+    Button soundBtn;
+    Button readCalls;
+    Button audio;
+    Button notificationsBtn;
+    TextView btn_textView;
+    TextView step_1_textView;
 
 
     @Override
@@ -45,7 +45,7 @@ public class MainActivity extends AppCompatActivity {
 //        audioPermission = checkForAudioPermission();
 //        readPhonePermission = checkForReadPhonePermission();
 
-//        Intent incomingCall = new Intent(this.context, IncomingCall.class);
+//        Intent incomingCall = new Intent(this.context, ToggleSoundMode.class);
 //
 //        boolean alarmRunning = (PendingIntent.getBroadcast(this.context, 0, incomingCall, PendingIntent.FLAG_NO_CREATE) != null);
 //        if (alarmRunning == false){
@@ -54,7 +54,8 @@ public class MainActivity extends AppCompatActivity {
 //            alarmManager.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime(), 1800000, pendingIntent);
 //        }
 
-
+        Intent intentMyService = new Intent(context, TimerService.class);
+        context.startService(intentMyService);
 
         soundBtn = findViewById(R.id.soundBtn);
         readCalls = findViewById(R.id.read_calls_permission);
@@ -62,7 +63,6 @@ public class MainActivity extends AppCompatActivity {
         btn_textView = findViewById(R.id.btn_text);
         step_1_textView = findViewById(R.id.step_1_textview);
         notificationsBtn = findViewById(R.id.notification_Btn);
-
 
     }
 
@@ -136,9 +136,6 @@ public class MainActivity extends AppCompatActivity {
                     intent.setAction("ax.androidexample.mybroadcast");
                     sendBroadcast(intent);
                     Log.d("BroadCast: ", "intent initiated");
-
-
-
                 } catch (Exception e) {
                     Log.d("toggle sound", "fail at button, reason:", e);
                 }
@@ -184,8 +181,6 @@ public class MainActivity extends AppCompatActivity {
             case MY_PERMISSIONS_REQUEST_READ_PHONE_STATE: {
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
                     try {
-                        readPhonePermission = true;
-
                         if (checkForReadPhonePermission() && checkForAudioPermission()){
                             soundBtn.setEnabled(true);
                         }
