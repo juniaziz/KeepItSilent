@@ -14,5 +14,6 @@
 
     <string name="btn_text">You must give both permissions to enable this button</string>
 
+    <string name="btn_text_after_perm">Put your phone in silent and make three test calls to check its working</string>
 
 </resources>

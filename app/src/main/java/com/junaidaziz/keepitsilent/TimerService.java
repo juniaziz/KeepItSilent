@@ -24,27 +24,19 @@ public class TimerService extends Service {
     private Handler mHandler = new Handler();
 
     private static final String SOUND_BROADCAST_ACTION = "com.junaidaziz.www";
-    private static long serviceStartTime = 0;
-    private static long serviceCurrentTime = 0;
-    private static long serviceElapsedTime = 0;
+    private static final int RESTORATION_TIME = 50000; //1200000;  //20 minutes
+    private static final int ONE_HOUR_WAIT_TIME = 200000; //3600000; //60 minutes
 
-    private static long restorationStartTime = 0;
-    private static long restorationCurrentTime = 0;
-    private static long restorationElapsedTime = 0;
-    private static final int RESTORATION_TIME = 20000;
-
-    private static final int ONE_HOUR_WAIT_TIME = 100000;
     private static String incomingNumber;
     private static ArrayList<String> missedNumbersArray = new ArrayList<>();
     private static int missedCallCounter = 0;
     private static Intent intent2;
     private static boolean soundModeChanged = false;
-    private static  ToggleSoundMode toggleSoundMode;
+    private ToggleSoundMode toggleSoundMode;
 
     @Override
     public void onCreate() {
         super.onCreate();
-
         Log.e("TIMER:: ", "onCreate");
 
         IntentFilter intentFilter = new IntentFilter(SOUND_BROADCAST_ACTION);
@@ -62,18 +54,14 @@ public class TimerService extends Service {
             restorationTimer = null;
         }
 
-        serviceStartTime = System.currentTimeMillis();
-        Log.e("TIMER:: ", "serviceStartTime: " + serviceStartTime);
         mTimer = new Timer();
         restorationTimer = new Timer();
-
         mTimer.schedule(new TerminateService(), ONE_HOUR_WAIT_TIME);
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.e("TIMER:: ", "SERVICE CALLED");
-
         missedCallCounter = 0;
 
         incomingNumber = intent.getStringExtra("incomingNumber");
@@ -101,25 +89,12 @@ public class TimerService extends Service {
                 sendBroadcast(intent2);
                 soundModeChanged = true;
                 Log.e("TIMER:: ", "ToggleSoundMode intent initiated");
-
+                Toast.makeText(this, "Sound Mode Changed: Max Volume", Toast.LENGTH_LONG).show();
                 restorationTimer.schedule(new RestorationTimer(), RESTORATION_TIME);
             }
-//            else if (missedCallCounter > 10 && soundModeChanged){
-//                intent2.putExtra("intentType", "RESTORE ORIGINAL");
-//                sendBroadcast(intent2);
-//                soundModeChanged = false;
-//                Log.e("TIMER:: ", "ToggleSoundMode intent initiated to RESTORE ORIGINAL");
-//            }
-
         } else {
             Log.e("TIMER:: ", "incomingNumber not found in missedNumbersArray");
         }
-
-
-//        serviceCurrentTime = System.currentTimeMillis();
-//        Log.e("TIMER:: ", "serviceCurrentTime: " + serviceCurrentTime);
-//        serviceElapsedTime = serviceCurrentTime - serviceStartTime;
-//        Log.e("TIMER:: ", "serviceElapsedTime: " + serviceElapsedTime);
 
         mHandler.post(new Runnable() {
             @Override
@@ -140,59 +115,32 @@ public class TimerService extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
-
         unregisterReceiver(toggleSoundMode);
-
         Log.e("TIMER:: ", "onDestroy");
     }
 
     private class TerminateService extends TimerTask {
-
         @Override
         public void run() {
-//            Log.e("TIMER:: ", "timer run()");
-//            serviceCurrentTime = System.currentTimeMillis();
-//            Log.e("TIMER:: ", "currentTime " + serviceCurrentTime);
-//            serviceElapsedTime = serviceCurrentTime - serviceStartTime;
-//            Log.e("TIMER:: ", "timer elapsedTime: " + serviceElapsedTime);
-//            if (serviceStartTime != 0 && serviceElapsedTime >= 20000){
-//
-//                if (soundModeChanged){
-//                    intent2.putExtra("intentType", "RESTORE ORIGINAL");
-//                    sendBroadcast(intent2);
-//                    soundModeChanged = false;
-//                    //Log.e("TIMER:: ", "ToggleSoundMode intent initiated to RESTORE ORIGINAL");
-//                }
-
-                missedNumbersArray.clear();
-                missedCallCounter = 0;
-//                mTimer.cancel();
-                Log.e("TIMER:: ", "SERVICE ENDED");
-                stopSelf();
-            //}
-        }
-    }
-
-    private class RestorationTimer extends TimerTask {
-
-        @Override
-        public void run() {
-//            Log.e("TIMER:: ", "RestorationTimer run()");
-//            restorationCurrentTime = System.currentTimeMillis();
-//            Log.e("TIMER:: ", "currentTime " + serviceCurrentTime);
-//            restorationElapsedTime = restorationStartTime - restorationCurrentTime;
-//            Log.e("TIMER:: ", "timer elapsedTime: " + serviceElapsedTime);
-//            if (restorationStartTime != 0 && restorationElapsedTime >= 20000){
-
                 if (soundModeChanged){
                     intent2.putExtra("intentType", "RESTORE ORIGINAL");
                     sendBroadcast(intent2);
                     soundModeChanged = false;
-                    //Log.e("TIMER:: ", "ToggleSoundMode intent initiated to RESTORE ORIGINAL");
                 }
-
-                Log.e("TIMER:: ", "RESTORATION DONE");
+                missedNumbersArray.clear();
+                missedCallCounter = 0;
+                Log.e("TIMER:: ", "SERVICE ENDED");
+                stopSelf();
         }
+    }
 
+    private class RestorationTimer extends TimerTask {
+        @Override
+        public void run() {
+            intent2.putExtra("intentType", "RESTORE ORIGINAL");
+            sendBroadcast(intent2);
+            soundModeChanged= false;
+            Log.e("TIMER:: ", "RESTORATION DONE");
+        }
     }
 }

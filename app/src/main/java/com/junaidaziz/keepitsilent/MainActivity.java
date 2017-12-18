@@ -102,34 +102,35 @@ public class MainActivity extends AppCompatActivity {
                 });
                 Toast.makeText(context, "Notification Access Asked", Toast.LENGTH_LONG).show();
             }  else {
-                Toast.makeText(context, "Notification Access Granted", Toast.LENGTH_LONG).show();
+               // Toast.makeText(context, "Notification Access Granted", Toast.LENGTH_LONG).show();
             }
         }
 
         if (checkForPermissions()){
             soundBtn.setEnabled(true);
             soundBtn.setOnClickListener(onSoundBtnListener);
-            btn_textView.setVisibility(View.INVISIBLE);
+            btn_textView.setText(R.string.btn_text_after_perm);
             step_1_textView.setText(R.string.step_1_done);
+
         }
     }
 
     Button.OnClickListener onSoundBtnListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-                try {
-                    Intent intentMyService = new Intent(context, TimerService.class);
-                    intentMyService.putExtra("incomingNumber", "012345678");
-                    context.startService(intentMyService);
+            try {
+                Intent intentMyService = new Intent(context, TimerService.class);
+                intentMyService.putExtra("incomingNumber", "012345678");
+                context.startService(intentMyService);
 
-                    //toggleSoundMode();
+                //toggleSoundMode();
 //                    Intent intent = new Intent();
 //                    intent.setAction("ax.androidexample.mybroadcast");
 //                    sendBroadcast(intent);
 //                    Log.d("BroadCast: ", "intent initiated");
-                } catch (Exception e) {
-                    Log.d("toggle sound", "fail at button, reason:", e);
-                }
+            } catch (Exception e) {
+                Log.d("toggle sound", "fail at button, reason:", e);
+            }
         }
     };
 
