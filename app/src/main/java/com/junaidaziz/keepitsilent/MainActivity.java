@@ -10,6 +10,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.*;
 import android.content.*;
+import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -25,6 +26,7 @@ public class MainActivity extends AppCompatActivity {
     Context context;
     NotificationManager notificationManager;
     private static final int MY_PERMISSIONS_REQUEST_READ_PHONE_STATE = 101;
+
     Button soundBtn;
     Button readCalls;
     Button audio;
@@ -41,20 +43,6 @@ public class MainActivity extends AppCompatActivity {
         Log.d("Activity: ", "onCreate()");
 
         notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-
-//        audioPermission = checkForAudioPermission();
-//        readPhonePermission = checkForReadPhonePermission();
-
-//        Intent incomingCall = new Intent(this.context, ToggleSoundMode.class);
-//
-//        boolean alarmRunning = (PendingIntent.getBroadcast(this.context, 0, incomingCall, PendingIntent.FLAG_NO_CREATE) != null);
-//        if (alarmRunning == false){
-//            PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, incomingCall, 0);
-//            AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-//            alarmManager.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime(), 1800000, pendingIntent);
-//        }
-
-
 
         soundBtn = findViewById(R.id.soundBtn);
         readCalls = findViewById(R.id.read_calls_permission);
@@ -131,6 +119,7 @@ public class MainActivity extends AppCompatActivity {
         public void onClick(View v) {
                 try {
                     Intent intentMyService = new Intent(context, TimerService.class);
+                    intentMyService.putExtra("incomingNumber", "012345678");
                     context.startService(intentMyService);
 
                     //toggleSoundMode();

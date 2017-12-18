@@ -26,11 +26,11 @@
         <service android:name=".BackgroundService" />
         <service android:name=".TimerService" />
 
-        <receiver android:name=".ToggleSoundMode">
-            <intent-filter>
-                <action android:name="ax.androidexample.mybroadcast" />
-            </intent-filter>
-        </receiver>
+        <!--<receiver android:name=".ToggleSoundMode">-->
+            <!--<intent-filter>-->
+                <!--<action android:name="com.junaidaziz.www" />-->
+            <!--</intent-filter>-->
+        <!--</receiver>-->
 
         <receiver android:name=".PhoneCallReceiver">
             <intent-filter>
